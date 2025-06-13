@@ -1,1 +1,86 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #27ae60;
+  --color-secondary: #f39c12;
+  --color-background: #ffffff;
+  --color-text: #333333;
+  --font-family: 'Inter', sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-text;
+    font-family: var(--font-family);
+  }
+}
+
+@layer components {
+  .container {
+    @apply mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl;
+  }
+
+  .btn {
+    @apply px-4 py-2 rounded-lg transition-colors;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-white hover:brightness-90;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-white hover:brightness-90;
+  }
+
+  .input {
+    @apply w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary;
+  }
+
+  .card {
+    @apply bg-white rounded-lg shadow-sm p-6;
+  }
+}
+
+@layer utilities {
+  .text-primary {
+    color: var(--color-primary);
+  }
+
+  .text-secondary {
+    color: var(--color-secondary);
+  }
+
+  .bg-primary {
+    background-color: var(--color-primary);
+  }
+
+  .bg-secondary {
+    background-color: var(--color-secondary);
+  }
+
+  .bg-background {
+    background-color: var(--color-background);
+  }
+
+  .text-text {
+    color: var(--color-text);
+  }
+
+  .border-primary {
+    border-color: var(--color-primary);
+  }
+
+  .border-secondary {
+    border-color: var(--color-secondary);
+  }
+
+  .ring-primary {
+    --tw-ring-color: var(--color-primary);
+  }
+
+  .ring-secondary {
+    --tw-ring-color: var(--color-secondary);
+  }
+}
