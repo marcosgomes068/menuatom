@@ -2,8 +2,12 @@
 
 import { useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Save, Upload } from 'lucide-react'
+import { Save } from 'lucide-react'
 import { useConfigStore } from '@/store/config'
+import ImageUpload from '@/components/admin/ImageUpload'
+import { ImageService } from '@/services/imageService'
+
+const imageService = ImageService.getInstance()
 
 export default function ConfiguracoesPage() {
   const { restaurant, updateRestaurant } = useConfigStore()
@@ -13,9 +17,34 @@ export default function ConfiguracoesPage() {
     console.log('Salvando configurações:', restaurant)
   }
 
-  const handleImageUpload = (type: 'logo' | 'banner') => {
-    // TODO: Implementar upload de imagens
-    console.log('Upload de imagem:', type)
+  const handleImageUpload = async (type: 'logo' | 'banner', file: File) => {
+    try {
+      const result = await imageService.uploadImage(file, type === 'logo' ? 'banner' : 'banner')
+      updateRestaurant({
+        ...restaurant,
+        [type]: result.url,
+      })
+    } catch (error) {
+      console.error('Erro ao fazer upload da imagem:', error)
+    }
+  }
+
+  const handleImageRemove = async (type: 'logo' | 'banner') => {
+    try {
+      const currentImage = restaurant[type]
+      if (currentImage) {
+        const filename = currentImage.split('/').pop()
+        if (filename) {
+          await imageService.deleteImage(filename)
+        }
+      }
+      updateRestaurant({
+        ...restaurant,
+        [type]: undefined,
+      })
+    } catch (error) {
+      console.error('Erro ao remover imagem:', error)
+    }
   }
 
   return (
@@ -39,8 +68,13 @@ export default function ConfiguracoesPage() {
               <input
                 type="text"
                 value={restaurant.name}
-                onChange={(e) => updateRestaurant({ name: e.target.value })}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                onChange={(e) =>
+                  updateRestaurant({
+                    ...restaurant,
+                    name: e.target.value,
+                  })
+                }
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff6b35]"
               />
             </div>
 
@@ -50,9 +84,14 @@ export default function ConfiguracoesPage() {
               </label>
               <textarea
                 value={restaurant.description}
-                onChange={(e) => updateRestaurant({ description: e.target.value })}
+                onChange={(e) =>
+                  updateRestaurant({
+                    ...restaurant,
+                    description: e.target.value,
+                  })
+                }
                 rows={3}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff6b35]"
               />
             </div>
 
@@ -83,14 +122,14 @@ export default function ConfiguracoesPage() {
           </div>
         </motion.div>
 
-        {/* Contatos e Redes Sociais */}
+        {/* Contato */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           className="bg-white p-6 rounded-lg shadow-sm"
         >
-          <h2 className="text-lg font-semibold mb-4">Contatos e Redes Sociais</h2>
+          <h2 className="text-lg font-semibold mb-4">Contato</h2>
           
           <div className="space-y-4">
             <div>
@@ -100,9 +139,13 @@ export default function ConfiguracoesPage() {
               <input
                 type="text"
                 value={restaurant.whatsapp}
-                onChange={(e) => updateRestaurant({ whatsapp: e.target.value })}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
-                placeholder="(00) 00000-0000"
+                onChange={(e) =>
+                  updateRestaurant({
+                    ...restaurant,
+                    whatsapp: e.target.value,
+                  })
+                }
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff6b35]"
               />
             </div>
 
@@ -113,9 +156,13 @@ export default function ConfiguracoesPage() {
               <input
                 type="text"
                 value={restaurant.instagram}
-                onChange={(e) => updateRestaurant({ instagram: e.target.value })}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
-                placeholder="@seu_instagram"
+                onChange={(e) =>
+                  updateRestaurant({
+                    ...restaurant,
+                    instagram: e.target.value,
+                  })
+                }
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff6b35]"
               />
             </div>
 
@@ -126,9 +173,13 @@ export default function ConfiguracoesPage() {
               <input
                 type="text"
                 value={restaurant.facebook}
-                onChange={(e) => updateRestaurant({ facebook: e.target.value })}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
-                placeholder="facebook.com/seu_restaurante"
+                onChange={(e) =>
+                  updateRestaurant({
+                    ...restaurant,
+                    facebook: e.target.value,
+                  })
+                }
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff6b35]"
               />
             </div>
           </div>
@@ -148,50 +199,26 @@ export default function ConfiguracoesPage() {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Logo
               </label>
-              <div className="flex items-center space-x-4">
-                {restaurant.logo ? (
-                  <img
-                    src={restaurant.logo}
-                    alt="Logo"
-                    className="w-20 h-20 object-contain border rounded-lg"
-                  />
-                ) : (
-                  <div className="w-20 h-20 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
-                    <Upload size={24} className="text-gray-400" />
-                  </div>
-                )}
-                <button
-                  onClick={() => handleImageUpload('logo')}
-                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-                >
-                  Alterar Logo
-                </button>
-              </div>
+              <ImageUpload
+                currentImage={restaurant.logo}
+                onImageUpload={(file) => handleImageUpload('logo', file)}
+                onImageRemove={() => handleImageRemove('logo')}
+                aspectRatio={1}
+                maxSize={2}
+              />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Banner
               </label>
-              <div className="flex items-center space-x-4">
-                {restaurant.banner ? (
-                  <img
-                    src={restaurant.banner}
-                    alt="Banner"
-                    className="w-40 h-20 object-cover border rounded-lg"
-                  />
-                ) : (
-                  <div className="w-40 h-20 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
-                    <Upload size={24} className="text-gray-400" />
-                  </div>
-                )}
-                <button
-                  onClick={() => handleImageUpload('banner')}
-                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-                >
-                  Alterar Banner
-                </button>
-              </div>
+              <ImageUpload
+                currentImage={restaurant.banner}
+                onImageUpload={(file) => handleImageUpload('banner', file)}
+                onImageRemove={() => handleImageRemove('banner')}
+                aspectRatio={16 / 9}
+                maxSize={2}
+              />
             </div>
           </div>
         </motion.div>
@@ -200,7 +227,7 @@ export default function ConfiguracoesPage() {
       <div className="mt-6 flex justify-end">
         <button
           onClick={handleSave}
-          className="flex items-center space-x-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
+          className="flex items-center space-x-2 px-6 py-3 bg-[#ff6b35] text-white rounded-lg hover:bg-[#ff6b35]/90 transition-colors"
         >
           <Save size={20} />
           <span>Salvar Alterações</span>

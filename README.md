@@ -1,32 +1,37 @@
-# 🍽️ Cardápio Digital
+# Delivery App
 
-Um cardápio digital profissional para restaurantes, desenvolvido com Next.js 14+ e Tailwind CSS.
+Um aplicativo de delivery para restaurantes, desenvolvido com Next.js, Prisma e SQLite.
 
-## ✨ Funcionalidades
+## Funcionalidades
 
-- 📱 Design responsivo mobile-first
-- 🎨 Interface moderna e intuitiva
-- 🔍 Busca e filtros por categoria
-- 🛒 Carrinho de compras persistente
-- 💬 Integração com WhatsApp
-- 🌙 Suporte a tema claro/escuro
-- 📱 PWA (Progressive Web App)
+- Sistema de autenticação de usuários
+- Gerenciamento de produtos e categorias
+- Upload de imagens
+- Personalização de tema
+- Área administrativa protegida
+- Banco de dados SQLite com Prisma
 
-## 🚀 Tecnologias
+## Tecnologias
 
-- Next.js 14+
+- Next.js 14
 - TypeScript
+- Prisma
+- SQLite
 - Tailwind CSS
 - Framer Motion
 - Zustand
-- Lucide Icons
 
-## 📦 Instalação
+## Pré-requisitos
+
+- Node.js 18+
+- npm ou yarn
+
+## Instalação
 
 1. Clone o repositório:
 ```bash
-git clone https://github.com/seu-usuario/cardapio-digital.git
-cd cardapio-digital
+git clone https://github.com/seu-usuario/deliveryapp.git
+cd deliveryapp
 ```
 
 2. Instale as dependências:
@@ -34,39 +39,43 @@ cd cardapio-digital
 npm install
 ```
 
-3. Inicie o servidor de desenvolvimento:
+3. Configure o banco de dados:
+```bash
+npx prisma generate
+npx prisma db push
+```
+
+4. Inicie o servidor de desenvolvimento:
 ```bash
 npm run dev
 ```
 
-4. Acesse [http://localhost:3000](http://localhost:3000)
+O aplicativo estará disponível em `http://localhost:3000`.
 
-## 🔧 Configuração
+## Estrutura do Projeto
 
-1. Personalize os dados do menu em `src/data/menu.ts`
-2. Ajuste as cores e estilos em `tailwind.config.ts`
-3. Configure o número do WhatsApp em `src/components/cart/CartModal.tsx`
+```
+deliveryapp/
+├── prisma/              # Configuração do Prisma
+├── public/             # Arquivos estáticos
+├── src/
+│   ├── app/           # Rotas e páginas
+│   ├── components/    # Componentes React
+│   ├── lib/          # Utilitários
+│   ├── services/     # Serviços
+│   └── store/        # Estado global
+└── package.json
+```
 
-## 📱 PWA
+## Deploy
 
-O projeto está configurado como PWA. Para gerar os ícones:
+O projeto está configurado para deploy na Vercel. Para fazer o deploy:
 
-1. Crie uma imagem quadrada de 512x512 pixels
-2. Use um gerador de ícones PWA (como [PWA Asset Generator](https://github.com/elegantapp/pwa-asset-generator))
-3. Coloque os ícones gerados em `public/icons/`
+1. Crie uma conta na [Vercel](https://vercel.com)
+2. Conecte seu repositório GitHub
+3. Configure as variáveis de ambiente necessárias
+4. Deploy automático será feito a cada push para a branch main
 
-## 📄 Licença
+## Licença
 
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
-## 🤝 Contribuindo
-
-1. Faça um fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
-## 📞 Suporte
-
-Para suporte, envie um email para seu-email@exemplo.com ou abra uma issue no GitHub.
+MIT

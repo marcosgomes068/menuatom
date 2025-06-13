@@ -1,0 +1,122 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamento com RestaurantInfo
+  restaurantInfo RestaurantInfo?
+}
+
+model RestaurantInfo {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  logo        String?
+  banner      String?
+  address     String
+  phone       String
+  whatsapp    String?
+  instagram   String?
+  facebook    String?
+  website     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relacionamento com User
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Relacionamentos com outros modelos
+  products    Product[]
+  categories  Category[]
+  orders      Order[]
+  themeConfig ThemeConfig?
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  image       String?
+  available   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relacionamentos
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  restaurantId String
+  restaurant  RestaurantInfo @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  orderItems  OrderItem[]
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  image       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relacionamentos
+  restaurantId String
+  restaurant  RestaurantInfo @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  products    Product[]
+}
+
+model Order {
+  id          String   @id @default(cuid())
+  status      String   @default("pending") // pending, preparing, ready, delivered, cancelled
+  total       Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relacionamentos
+  restaurantId String
+  restaurant  RestaurantInfo @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  items       OrderItem[]
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  quantity  Int
+  price     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamentos
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model ThemeConfig {
+  id              String   @id @default(cuid())
+  primaryColor    String   @default("#ff6b35")
+  secondaryColor  String   @default("#2d3142")
+  backgroundColor String   @default("#ffffff")
+  textColor       String   @default("#000000")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relacionamento com RestaurantInfo
+  restaurantId String @unique
+  restaurant  RestaurantInfo @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+} 
